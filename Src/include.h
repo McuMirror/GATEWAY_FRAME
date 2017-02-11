@@ -56,7 +56,7 @@ typedef char int8;
 #include "ult.h" 
 #include "httpd.h"
 #include "httpult.h"
-
+#include "script.h"
 
 #endif
 

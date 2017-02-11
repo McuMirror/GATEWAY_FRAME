@@ -87,6 +87,9 @@ S_Cmd cmd_list[] =
 			
 		{"show_parameter",shell_show_parameter,\
 			"show all the preset parameter"},
+
+		{"run_script",shell_run_script,\
+			"run script"},
 			
 
 		/*Î´ÊµÏÖ*/
@@ -140,6 +143,8 @@ char test_function(char* parameter)
 	//states = getSn_SR(0);
 	//close(0);
 	//tcp_server(0,8888);
+	
+	
 	translate_to_tcm300(test_buff,cmd_info->recv_buf);
 
 	return 0;
@@ -167,6 +172,14 @@ char shell_mem(char* parameter)
 
 	free(p_malloc);
 	//free(next_malloc);
+	return 0;
+}
+
+char shell_run_script(char* parameter)
+{
+	//P_S_Cmd_Info cmd_info = (P_S_Cmd_Info)parameter;	
+
+	run_script(&script_info);
 	return 0;
 }
 
@@ -963,7 +976,7 @@ char read_file(char* parameter)
 		}
 		if(res)
 			{
-				printf("\r\n open file filed ! please check the filename!\r\n read_file path length=xx offset=xx\r\n");
+				printf("\r\n open file failed ! please check the filename!\r\n read_file path length=xx offset=xx\r\n");
 				//__disable_irq();
 				f_close(&doc);
 				//__disable_irq();
@@ -975,7 +988,7 @@ char read_file(char* parameter)
 		__enable_irq();
 		if(res)
 			{
-				printf("\r\n read file filed ! !!!\r\n");
+				printf("\r\n read file failed ! !!!\r\n");
 				f_close(&doc);
 				return 0;
 			}
@@ -1359,5 +1372,7 @@ void explain_cmd(unsigned char recv_data)
 	printf("%c",recv_data);
 			
 }
+
+
 
 

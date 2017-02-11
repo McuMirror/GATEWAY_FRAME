@@ -116,6 +116,8 @@ char write_file(char* parameter);
 char show_task(char* parameter);
 char test_function(char* parameter);
 
+char shell_run_script(char* parameter);
+
 char shell_mem(char* parameter);
 char shell_show_parameter(char* parameter);
 
