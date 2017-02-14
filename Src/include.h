@@ -28,6 +28,8 @@ typedef char int8;
 #include "usart.h"
 //#include "usb_otg.h"
 #include "gpio.h"
+
+#include "shell.h"
 #include "led.h"
 
 #include "FreeRTOS.h"
@@ -42,7 +44,6 @@ typedef char int8;
 #include "w5500_driver.h"
 #include "wizchip_conf.h"
 #include "cmd.h"
-#include "shell.h"
 #include "string_dict.h"
 #include "flash.h"
 #include "telegraph.h"

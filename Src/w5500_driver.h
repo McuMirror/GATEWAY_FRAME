@@ -88,7 +88,8 @@ void deal_all_socket_server(void);
 void deal_each_socket_server(unsigned char socket_num);
 void deal_all_socket_client(void);
 void deal_each_socket_client(unsigned char socket_num);
-
+void deal_all_socket_udp(void);
+void deal_each_socket_udp(unsigned char socket_num);
 
 
 ////////////////////////////////////

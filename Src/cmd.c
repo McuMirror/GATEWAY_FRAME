@@ -157,18 +157,24 @@ char shell_mem(char* parameter)
 	//char* next_malloc;
 	int stack_addr = *((int*)0X08000000);
 	int heap_addr;
-	int free_stack_size = 0X1400;
-	heap_addr = stack_addr-0X1400-0X1000;
+	
+	int stack_set_size = 0X1400;
+	int heap_set_size = 0X1000;
+	
+	int free_stack_size = stack_set_size;
+	heap_addr = stack_addr-stack_set_size-heap_set_size;
 
 	while(!(*((int*)(stack_addr - free_stack_size))))
 		{
 			free_stack_size -= 4;
 		}
 	p_malloc = (char*)malloc(1);
-	printf("\r\n_heap start addr 0X%x _heap total size is %d byte _heap_used size is %d byte free size is %d byte\r\n",heap_addr,0X1000,0X1000-(stack_addr - 0X1400-(int)p_malloc),(stack_addr - 0X1400-(int)p_malloc));
+	printf("\r\n_heap start addr 0X%x _heap total size is %d byte _heap_used size is %d byte free size is %d byte\r\n",heap_addr,heap_set_size,heap_set_size-(stack_addr - stack_set_size-(int)p_malloc),(stack_addr - stack_set_size-(int)p_malloc));
 	//printf("after malloc %d size\r\n",1);
 	//next_malloc = (char*)malloc(10);
-	printf("stack start addr 0X%x stack total size is %d byte stack_used size is %d byte free size is %d byte\n\r",stack_addr,0X1400,free_stack_size,(0X1400 - free_stack_size));
+	printf("stack start addr 0X%x stack total size is %d byte stack_used size is %d byte free size is %d byte\n\r",stack_addr,stack_set_size,free_stack_size,(stack_set_size - free_stack_size));
+
+	DEBUG_USR_ErrLog("stack start addr 0X%x stack total size is %d byte stack_used size is %d byte free size is %d byte\n\r",stack_addr,stack_set_size,free_stack_size,(stack_set_size - free_stack_size));
 
 	free(p_malloc);
 	//free(next_malloc);

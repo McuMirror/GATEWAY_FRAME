@@ -71,6 +71,7 @@ typedef struct
 
 
 void send_data_to_tcm300(unsigned char len);
+void send_data_by_tcm300(char* data,unsigned short lenth);
 void read_tcm300_id(void);
 void task_deal_tcm300(void);
 /*void Deal_RPS_RadioSub(void);

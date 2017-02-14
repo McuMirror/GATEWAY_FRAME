@@ -1,5 +1,5 @@
 #include "include.h"
-
+ char test_buf[100];
 
 unsigned char get_parameter_switch_value_info(P_S_Revc_Parameter_Info info,char* str)//开关键值专门处理
 {
@@ -73,28 +73,28 @@ unsigned char get_parameter_channel_info(P_S_Revc_Parameter_Info info,char* str)
 	info->parameter_length = 1;
 	//info->type= get_parameter_type("通道");
 	info->type= parameter_channel;
-		info->info_dec = str_to_int(str + sizeof("复合通道")-1);
-		switch(info->info_dec)
-			{
-				case 1:
-					info->info_hex[0] |=0X01;
-					break;
+	info->info_dec = str_to_int(str + sizeof("复合通道")-1);
+	switch(info->info_dec)
+		{
+			case 1:
+				info->info_hex[0] |=0X01;
+				break;
 
-				case 2:
-					info->info_hex[0] |=0X02;
-					break;
+			case 2:
+				info->info_hex[0] |=0X02;
+				break;
 
-				case 3:
-					info->info_hex[0] |=0X04;
-					break;
+			case 3:
+				info->info_hex[0] |=0X04;
+				break;
 
-				case 4:
-					info->info_hex[0] |=0X08;
-					break;
+			case 4:
+				info->info_hex[0] |=0X08;
+				break;
 
-				default:
-					break;
-			}
+			default:
+				break;
+		}
       return 1;
 }
 
@@ -175,7 +175,6 @@ unsigned char add_parameter_into_telegraph(char* reslut_tel,P_S_Telegraph telegr
 
 void translate_to_tcm300(char*buf,char* str)
 { 	
-  	char test_buf[100];
 	char send_buf[60];
 	unsigned char device_seek_num = 0,operat_seek_num = 0,device_have_found = 0,operat_have_found = 0;
 	P_S_Device_Telegraph target_device;
@@ -183,10 +182,10 @@ void translate_to_tcm300(char*buf,char* str)
 	S_Revc_Parameter_Info channel_info = {.parameter_length = 0,.type = (PARAMETER_TYPE)0};//如果含有通道类信息则保存于这个结构体中
 	S_Revc_Parameter_Info key_value_info = {.parameter_length = 0,.type = (PARAMETER_TYPE)0,.info_dec = 0};//如果含有无线开关按键相关信息则保存于这个结构体中
 	
-	P_S_Revc_Parameter_Info revc_parameter[15];
+	P_S_Revc_Parameter_Info recv_parameter[15];
 	unsigned char parameter_num = 0;
-	unsigned char loopx,loopx_inside;
-	revc_parameter[0] = (P_S_Revc_Parameter_Info)malloc(sizeof(S_Revc_Parameter_Info));
+	unsigned char loopx;//,loopx_inside;
+	recv_parameter[0] = (P_S_Revc_Parameter_Info)malloc(sizeof(S_Revc_Parameter_Info));
 	char * nexttok;
 	nexttok = strtok((char*)str," ");
 	while(nexttok)
@@ -222,10 +221,10 @@ void translate_to_tcm300(char*buf,char* str)
 								break;
 
 							case type_parameter:// 不建议字典里保存参数类型
-								/*if(get_parameter_info(revc_parameter[parameter_num],nexttok))
+								/*if(get_parameter_info(recv_parameter[parameter_num],nexttok))
 								{
 									parameter_num ++;
-									revc_parameter[parameter_num] = (P_S_Revc_Parameter_Info)malloc(sizeof(S_Revc_Parameter_Info));
+									recv_parameter[parameter_num] = (P_S_Revc_Parameter_Info)malloc(sizeof(S_Revc_Parameter_Info));
 								}*/
 								
 								break;
@@ -252,10 +251,10 @@ void translate_to_tcm300(char*buf,char* str)
 					
 					else
 						{
-							if(get_parameter_info(revc_parameter[parameter_num],nexttok))
+							if(get_parameter_info(recv_parameter[parameter_num],nexttok))
 								{
 									parameter_num ++;
-									revc_parameter[parameter_num] = (P_S_Revc_Parameter_Info)malloc(sizeof(S_Revc_Parameter_Info));
+									recv_parameter[parameter_num] = (P_S_Revc_Parameter_Info)malloc(sizeof(S_Revc_Parameter_Info));
 								}
 						}
 				}
@@ -267,7 +266,7 @@ void translate_to_tcm300(char*buf,char* str)
 			printf("\r\nUnknow Device !!\r\n");
 			for(loopx = 0;loopx < (parameter_num +1);loopx ++)
 				{
-					free(revc_parameter[loopx]);
+					free(recv_parameter[loopx]);
 				}
 			
 			return;
@@ -277,7 +276,7 @@ void translate_to_tcm300(char*buf,char* str)
 			printf("\r\nUnknow Operat !!\r\n");
 			for(loopx = 0;loopx < (parameter_num +1);loopx ++)
 				{
-					free(revc_parameter[loopx]);
+					free(recv_parameter[loopx]);
 				}
 			
 			return;
@@ -285,7 +284,7 @@ void translate_to_tcm300(char*buf,char* str)
 	
 	if(1== find_device_seek_num_in_map(device_seek_num,1))//协议信息保存在常驻内存区
 		{
-			target_device = (&(RAM_static_tel.telegraph[save_tel_cfg.search_map.point]));//记录当前字符串对应的协议保存地址
+			/*target_device = (&(RAM_static_tel.telegraph[save_tel_cfg.search_map.point]));//记录当前字符串对应的协议保存地址
 			if(1 == find_operat_seek_num_in_telegraph(target_device,operat_seek_num))//当前设备协议中保存了目标操作协议信息
 				{
 					set_string(test_buf,100,0);	
@@ -306,7 +305,7 @@ void translate_to_tcm300(char*buf,char* str)
 								{
 									for(loopx_inside = 0; loopx_inside < (target_device->telegraphs[target_device->point].parameter_num) ; loopx_inside++)
 										{
-											if(revc_parameter[loopx]->type == (PARAMETER_TYPE)(target_device->telegraphs[target_device->point].parameter[loopx_inside].parameter.parameter_name))
+											if(recv_parameter[loopx]->type == (PARAMETER_TYPE)(target_device->telegraphs[target_device->point].parameter[loopx_inside].parameter.parameter_name))
 												{
 													break;
 												}
@@ -314,7 +313,7 @@ void translate_to_tcm300(char*buf,char* str)
 												{
 													if(loopx_inside == (target_device->telegraphs[target_device->point].parameter_num -1))
 														{
-															printf("\r\n\r\nParameter ERROR!!  Don't Need  '%s' pls check out!!\r\n ",get_parameter_name(revc_parameter[loopx]->type ));															
+															printf("\r\n\r\nParameter ERROR!!  Don't Need  '%s' pls check out!!\r\n ",get_parameter_name(recv_parameter[loopx]->type ));															
 														}
 												}
 										}
@@ -323,7 +322,7 @@ void translate_to_tcm300(char*buf,char* str)
 					
 					for(loopx = 0; loopx < parameter_num;loopx++)
 						{
-							add_parameter_into_telegraph(send_buf,&(target_device->telegraphs[target_device->point]),revc_parameter[loopx]);//添加接收到的参数信息
+							add_parameter_into_telegraph(send_buf,&(target_device->telegraphs[target_device->point]),recv_parameter[loopx]);//添加接收到的参数信息
 						}
 					if(channel_info.type)
 						{
@@ -335,53 +334,41 @@ void translate_to_tcm300(char*buf,char* str)
 						}
 					
 					add_crc_into_telegraph((unsigned char*)send_buf,target_device->telegraphs[target_device->point].telegraph_length);
+					
+					send_data_by_tcm300((char *)send_buf,target_device->telegraphs[target_device->point].telegraph_length);
+					
 					hex_to_str(test_buf,(unsigned char*)send_buf,target_device->telegraphs[target_device->point].telegraph_length);
 					printf("\r\nfind telegraph : %s",test_buf);
 				}
 			else
 				{
 					printf("\r\nI Can't Find '%s' In '%s'\r\n",get_str_name(operat_seek_num),get_str_name(device_seek_num));
-				}
+				}*/
+				target_device = (&(RAM_static_tel.telegraph[save_tel_cfg.search_map.point]));//记录当前字符串对应的协议保存地址
+				complete_telegraph(device_seek_num,operat_seek_num,target_device,send_buf,recv_parameter,parameter_num,&channel_info,&key_value_info);
 		}
 	else if(1== find_device_seek_num_in_map(device_seek_num,2))//协议保存在动态内存区
 		{
 			target_device = (&(RAM_dynamic_tel.telegraph[save_tel_cfg.search_map.point]));
-			if(1 == find_operat_seek_num_in_telegraph(target_device,operat_seek_num))
-				{
-					set_string(test_buf,100,0);					
-					hex_to_str(test_buf,target_device->telegraphs[target_device->point].telegraph,target_device->telegraphs[target_device->point].telegraph_length);
-					printf("find telegraph : %s",test_buf);
-				}
-			else
-				{
-					printf("\r\nI Can't Find '%s' In '%s'\r\n",get_str_name(operat_seek_num),get_str_name(device_seek_num));
-				}
+			complete_telegraph(device_seek_num,operat_seek_num,target_device,send_buf,recv_parameter,parameter_num,&channel_info,&key_value_info);
 		}
+	
 	else if(1== find_device_seek_num_in_map(device_seek_num,3))//协议保存在SD卡内 还未加载到内存中
 		{
 			load_telegraph_dynamic(device_seek_num);//将协议信息加载到内存中
 			find_device_seek_num_in_map(device_seek_num,2);
 			target_device = (&(RAM_dynamic_tel.telegraph[save_tel_cfg.search_map.point]));
-			if(1 == find_operat_seek_num_in_telegraph(target_device,operat_seek_num))
-				{
-					set_string(test_buf,100,0);					
-					hex_to_str(test_buf,target_device->telegraphs[target_device->point].telegraph,target_device->telegraphs[target_device->point].telegraph_length);
-					printf("find telegraph : %s",test_buf);
-				}
-			else
-				{
-					printf("\r\nI Can't Find '%s' In '%s'\r\n",get_str_name(operat_seek_num),get_str_name(device_seek_num));
-				}
-			
+			complete_telegraph(device_seek_num,operat_seek_num,target_device,send_buf,recv_parameter,parameter_num,&channel_info,&key_value_info);
 		}
+	
 	else
 		{
-			printf("Can't Find Device In Memory!\r\n");
+			printf("\r\nCan't Find Device In Memory!\r\n");
 		}
 	
 	for(loopx = 0;loopx < (parameter_num +1);loopx ++)
 				{
-					free(revc_parameter[loopx]);
+					free(recv_parameter[loopx]);
 				}
 }
 
@@ -392,6 +379,73 @@ void add_crc_into_telegraph(unsigned char* telegraph,unsigned char telegraph_len
 	SetCRC8Sub((telegraph+6),(telegraph_length-7));
 }
 
+unsigned char complete_telegraph(unsigned char device_seek_num,unsigned char operat_seek_num,P_S_Device_Telegraph target_device,char* send_buf,P_S_Revc_Parameter_Info* recv_parameter,unsigned char parameter_num,S_Revc_Parameter_Info*  channel_info,S_Revc_Parameter_Info* key_value_info)
+{
+	//P_S_Device_Telegraph target_device;
+	unsigned char loopx,loopx_inside;
+	//target_device = (&(RAM_static_tel.telegraph[save_tel_cfg.search_map.point]));//记录当前字符串对应的协议保存地址
+	if(1 == find_operat_seek_num_in_telegraph(target_device,operat_seek_num))//当前设备协议中保存了目标操作协议信息
+		{
+			set_string(test_buf,100,0);	
+			my_mem_copy((char*)(target_device->telegraphs[target_device->point].telegraph),send_buf,(target_device->telegraphs[target_device->point].telegraph_length));
+
+			if((target_device->telegraphs[target_device->point].parameter_num) != (parameter_num+channel_info->parameter_length+key_value_info->parameter_length))//判断接收的参数是否合格
+				{
+					printf("\r\n'%s' Need %d Paratemers :",get_str_name(operat_seek_num),((target_device->telegraphs[target_device->point]).parameter_num));
+					for(loopx = 0 ; loopx < (target_device->telegraphs[target_device->point].parameter_num); loopx++)
+						{
+							printf("  '%s'  ",get_parameter_name((PARAMETER_TYPE)(target_device->telegraphs[target_device->point].parameter[loopx].parameter.parameter_name)));
+						}
+					printf("\r\n Please Check Out!!!\r\n");
+				}
+			else
+				{
+					for(loopx = 0 ; loopx < parameter_num ; loopx++)
+						{
+							for(loopx_inside = 0; loopx_inside < (target_device->telegraphs[target_device->point].parameter_num) ; loopx_inside++)
+								{
+									if(recv_parameter[loopx]->type == (PARAMETER_TYPE)(target_device->telegraphs[target_device->point].parameter[loopx_inside].parameter.parameter_name))
+										{
+											break;
+										}
+									else
+										{
+											if(loopx_inside == (target_device->telegraphs[target_device->point].parameter_num -1))
+												{
+													printf("\r\n\r\nParameter ERROR!!  Don't Need  '%s' pls check out!!\r\n ",get_parameter_name(recv_parameter[loopx]->type ));															
+												}
+										}
+								}
+						}
+				}
+			
+			for(loopx = 0; loopx < parameter_num;loopx++)
+				{
+					add_parameter_into_telegraph(send_buf,&(target_device->telegraphs[target_device->point]),recv_parameter[loopx]);//添加接收到的参数信息
+				}
+			if(channel_info->type)
+				{
+					add_parameter_into_telegraph(send_buf,&(target_device->telegraphs[target_device->point]),channel_info);//添加通道信息
+				}
+			if(key_value_info->type)
+				{
+					add_parameter_into_telegraph(send_buf,&(target_device->telegraphs[target_device->point]),key_value_info);//添加无线开关键值信息
+				}
+			
+			add_crc_into_telegraph((unsigned char*)send_buf,target_device->telegraphs[target_device->point].telegraph_length);
+			
+			send_data_by_tcm300((char *)send_buf,target_device->telegraphs[target_device->point].telegraph_length);
+			
+			hex_to_str(test_buf,(unsigned char*)send_buf,target_device->telegraphs[target_device->point].telegraph_length);
+			printf("\r\nfind telegraph : %s",test_buf);
+			return 1;
+		}
+	else
+		{
+			printf("\r\nI Can't Find '%s' In '%s'\r\n",get_str_name(operat_seek_num),get_str_name(device_seek_num));
+			return 0;
+		}
+}
 
 
 

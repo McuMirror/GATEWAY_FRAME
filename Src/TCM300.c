@@ -25,11 +25,17 @@ void transfer_tcm300_rxdata(void)
 	tcm300_operat_data.recv_msg[tcm300_operat_data.save_point++].len = data_from_tcm300.data_len;
 }
 
+void send_data_by_tcm300(char* data,unsigned short lenth)
+{
+	my_mem_copy(data,(char*)data_from_tcm300.tx_data,lenth);
+	send_data_to_tcm300(lenth);
+}
+
 void send_data_to_tcm300(unsigned char len)
 {	
 	//while(data_from_tcm300.is_dma_tx_sending);//等待dma发送完成
 	//data_from_tcm300.is_dma_tx_sending = 1;//dma发送完成中断中置为0
-	HAL_UART_Transmit_DMA(&huart2,data_from_tcm300.tx_data,len);
+	HAL_UART_Transmit(&huart2,data_from_tcm300.tx_data,len,100);
 }
 
 void send_data_to_tcm300_by_msg(unsigned char* data,unsigned short data_length)

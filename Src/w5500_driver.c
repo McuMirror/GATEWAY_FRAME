@@ -686,6 +686,10 @@ unsigned char start_udp_server(unsigned int socket_num,unsigned int port)
 						}
 						size = (unsigned short) ret;
 						sentsize = 0;
+						
+						deal_all_socket_udp();//收到数据处理
+						deal_each_socket_udp(socket_num);
+						
 						while(sentsize != size)
 							{
 								ret = sendto(socket_num,G_tcp_buf[num]+sentsize,size-sentsize,destip,destport);
@@ -842,6 +846,43 @@ void udp_server(unsigned int socket_num,unsigned int port)
 
 }
 
+
+void deal_all_socket_udp(void)
+{
+
+}
+
+void deal_each_socket_udp(unsigned char socket_num)
+{
+	switch (socket_num)
+		{
+			case 0:
+				break;
+
+			case 1:
+				break;
+
+			case 2:
+				break;
+
+			case 3:
+				break;
+
+			case 4:
+				break;
+
+			case 5:
+				break;
+
+			case 6:
+				break;
+
+			case 7:
+				break;
+
+				
+		}
+}
 
 void deal_all_socket_server(void)
 {

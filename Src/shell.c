@@ -1,5 +1,7 @@
 #include "include.h"
 
+
+
 #define COM huart6  //重定向到串口6
 
 #ifdef __GNUC__

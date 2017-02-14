@@ -83,10 +83,11 @@ char* get_str_name(unsigned char seek_num)
 	return NULL;
 }
 
-unsigned char find_str_in_dict(char* target_str)//返回值为1时,表示字符串已保存于字典中,可以根据point成员找到相关信息(name,seek_num)
+unsigned char find_str_in_dict(char* target_str)//返回值为1时,表示字符串已保存于字典中,可以根据point成员找到相关信息(name,seek_num)返回2时表示没有完全一样的,但是有比字符串长,且前面与字符串相同的
 {
 	unsigned char loopx;
-	unsigned reslut;
+	unsigned char reslut;
+	unsigned char tmp_reslut = 0;
 	for(loopx = 0; loopx < string_dict.save_number ;loopx ++)
 		{
 			if(string_dict.string[loopx].this_data_effect == EFFECT)
@@ -104,7 +105,8 @@ unsigned char find_str_in_dict(char* target_str)//返回值为1时,表示字符串已保存于
 					if(reslut == 2)
 						{
 							string_dict.point = loopx;
-							return 2;
+							tmp_reslut = 2;
+							//return 2;
 						}
 				}
 			else
@@ -112,7 +114,7 @@ unsigned char find_str_in_dict(char* target_str)//返回值为1时,表示字符串已保存于
 					continue;
 				}
 		}
-	return 0;
+	return tmp_reslut;
 }
 
 unsigned char find_empty_in_dict(void)
