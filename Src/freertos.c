@@ -4,7 +4,7 @@
   * Description        : Code for freertos applications
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2016 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -35,7 +35,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "cmsis_os.h"
-
+#include <string.h>
 /* USER CODE BEGIN Includes */     
 #include "include.h"
 /* USER CODE END Includes */
@@ -83,6 +83,19 @@ void vApplicationIdleHook(void);
 void vApplicationTickHook(void);
 
 /* USER CODE BEGIN 2 */
+
+void test_func(void)
+{
+	unsigned char loop100;
+	char buf[10];
+	for(loop100 = 0 ; loop100 <10 ; loop100++)
+		{
+			buf[loop100] = loop100;
+			printf("func_buf[%d]->%p\r\n",loop100,&buf[loop100]);
+		}	
+	//return buf;
+}
+
 
 /* USER CODE END 2 */
 
@@ -231,9 +244,12 @@ void system_core_task(void const * argument)
 void serial_operat_task(void const * argument)
 {
   /* USER CODE BEGIN serial_operat_task */
-   unsigned char serial_value;
+  unsigned char serial_value;
   save_task_info();
   char task_buf[100];
+  char log_buf[100];
+  static char save_buf[1024];
+  static char recv_num = 0;
   /* Infinite loop */
   for(;;)
   {
@@ -241,15 +257,31 @@ void serial_operat_task(void const * argument)
 	switch(serial_value)
 		{
 			case USART1_RECV_DATA:
-				//send(1,data_from_tcm300.rx_data,data_from_tcm300.data_len);//通过socket1 发送信息				
+				//send(1,data_from_tcm300.rx_data,data_from_tcm300.data_len);//通过socket1 发送信息
+				HAL_UART_Transmit(&huart1,P_CURRENT_WIFI_RX_DATA, CURRENT_WIFI_RX_DATA_LENGTH, 200);
+				FINISH_DEAL_WIFI_RX_DATA;
+				
 				break;
 			case USART2_RECV_DATA:
 				task_deal_tcm300();
-				send(4,data_from_tcm300.rx_data,data_from_tcm300.data_len);
+				//send(4,P_CURRENT_TCM300_RX_DATA,CURRENT_TCM300_RX_DATA_LENGTH);
 				set_string(task_buf,100,0);
-				hex_to_str(task_buf,data_from_tcm300.rx_data,data_from_tcm300.data_len);
-				printf("recv : %s\r\n",task_buf);				
-				//HAL_UART_Receive_DMA(&huart2, data_from_tcm300.rx_data, TCM300_RECV_BUFF_SIZE);  
+				set_string(log_buf,100,0);
+				hex_to_str(task_buf,P_CURRENT_TCM300_RX_DATA,CURRENT_TCM300_RX_DATA_LENGTH);
+				sprintf(log_buf,"recv : %s\r\n",task_buf);
+				printf("%s",log_buf);
+				if(recv_num < 10)
+					{
+						strcat(save_buf,log_buf);
+						recv_num++;
+					}
+				else
+					{
+						recv_num = 0;
+						save_tcm300_log(save_buf,string_length(save_buf));
+						set_string(save_buf,1024,0);
+					}
+				FINISH_DEAL_TCM300_RX_DATA;
 				break;
 
 			case USART3_RECV_DATA:
@@ -320,6 +352,31 @@ void watcher_task(void const * argument)
 {
   /* USER CODE BEGIN watcher_task */
 	save_task_info();	
+//static My_tskTCB* this_handle;
+//this_handle = (My_tskTCB*)xTaskGetCurrentTaskHandle();
+
+//char buf2[10];
+
+//char buf[10];
+//unsigned loop100;
+//for(loop100 = 0 ; loop100 <10 ; loop100++)
+//{
+	//buf[loop100] = loop100;
+	//printf("buf1_p[%d] -> %p\r\n",loop100,&buf[loop100]);
+//}
+
+
+//for(loop100 = 0 ; loop100 <10 ; loop100++)
+//{
+	//buf2[loop100] = loop100;
+	//printf("buf2_p[%d] -> %p\r\n",loop100,&buf2[loop100]);
+//}
+
+
+//test_func();
+
+//test_func();
+
 
   osDelay(5000);
   //read_tcm300_id();

@@ -63,10 +63,12 @@ void read_tcm300_id(void)
 
 void task_deal_tcm300(void)//////因为使用dma接收,同步帧55没有丢弃,所以所有做判断的位向后移一位
 {
+	////这里仅用于实验,正常使用时要用tcm300_operat_data 结构体中保存的数据
+	////而不是直接使用data_from_tcm300保存的数据
 	data_from_tcm300.recv_ok = 0;
-	if(VerifyCRC8Sub(&data_from_tcm300.rx_data[6],(data_from_tcm300.rx_data[2]+data_from_tcm300.rx_data[3])) == 0XFF)
+	if(VerifyCRC8Sub(&(TCM300_RX_DATA(6)),(TCM300_RX_DATA(2)+TCM300_RX_DATA(3)) == 0XFF));
 		{
-			if((data_from_tcm300.rx_data[4] == 0X02)&&(id.read_tcm300_id_flag == 0))
+			if((TCM300_RX_DATA(4) == 0X02)&&(id.read_tcm300_id_flag == 0))
 				{	
 					id.read_tcm300_id_flag = 1;
 					id.TCM300_ID[0] = data_from_tcm300.rx_data[15];
@@ -74,9 +76,9 @@ void task_deal_tcm300(void)//////因为使用dma接收,同步帧55没有丢弃,所以所有做判断
 					id.TCM300_ID[2] = data_from_tcm300.rx_data[17];
 					id.TCM300_ID[3] = data_from_tcm300.rx_data[18];
 				}
-			if(data_from_tcm300.rx_data[4] == 1)
+			if(TCM300_RX_DATA(4) == 1)
 				{
-					switch(data_from_tcm300.rx_data[6])
+					switch(TCM300_RX_DATA(6))
 						{
 							case 0XF6:
 						             	//Deal_RPS_RadioSub();
@@ -98,7 +100,7 @@ void task_deal_tcm300(void)//////因为使用dma接收,同步帧55没有丢弃,所以所有做判断
 	                	                             break;
 						}
 				}
-			if(data_from_tcm300.rx_data[4] == 7)
+			if(TCM300_RX_DATA(4) == 7)
 				{
 					data_from_tcm300.vBigRxMax =data_from_tcm300.rx_data[2]-4;
 					//DealBigdata();
@@ -224,5 +226,25 @@ void task_tcm300_send(unsigned int addr)
 	Tcm300_Msg_Ctrl.msg[addr].this_data_effect = UNEFFECT;
 	HAL_UART_Transmit_DMA(&huart1,(Tcm300_Msg_Ctrl.msg[addr].tx_data),(Tcm300_Msg_Ctrl.msg[addr].len));
 }
+
+
+void save_tcm300_log(char* log,unsigned char log_length)
+{
+
+  FIL doc;
+  unsigned int operat_num;
+  __disable_irq();
+  res = f_open(&doc,"0:tcm300.log",FA_WRITE|FA_OPEN_ALWAYS);
+  if(res != FR_OK)
+  	{
+		printf("\r\nopen file error errornumber is %d",res);
+		return;
+  	}
+  res = f_lseek(&doc,doc.fsize);
+  res = f_write(&doc,log,log_length,&operat_num);
+  res = f_close(&doc);
+  __enable_irq();
+}
+
 
 

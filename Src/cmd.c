@@ -79,7 +79,7 @@ S_Cmd cmd_list[] =
 		{"kill_server",shell_kill_server,\
 			"stop all tcp/udp server task"},
 			
-		{"tcm300_start_recv",shell_start_tcm300_rx,\
+		{"tcm300",shell_start_tcm300_rx,\
 			"tcm300 model start print recv data"},
 			
 		{"mem",shell_mem,\
@@ -168,13 +168,15 @@ char shell_mem(char* parameter)
 		{
 			free_stack_size -= 4;
 		}
+
 	p_malloc = (char*)malloc(1);
+
 	printf("\r\n_heap start addr 0X%x _heap total size is %d byte _heap_used size is %d byte free size is %d byte\r\n",heap_addr,heap_set_size,heap_set_size-(stack_addr - stack_set_size-(int)p_malloc),(stack_addr - stack_set_size-(int)p_malloc));
 	//printf("after malloc %d size\r\n",1);
 	//next_malloc = (char*)malloc(10);
 	printf("stack start addr 0X%x stack total size is %d byte stack_used size is %d byte free size is %d byte\n\r",stack_addr,stack_set_size,free_stack_size,(stack_set_size - free_stack_size));
 
-	DEBUG_USR_ErrLog("stack start addr 0X%x stack total size is %d byte stack_used size is %d byte free size is %d byte\n\r",stack_addr,stack_set_size,free_stack_size,(stack_set_size - free_stack_size));
+	//DEBUG_USR_ErrLog("stack start addr 0X%x stack total size is %d byte stack_used size is %d byte free size is %d byte\n\r",stack_addr,stack_set_size,free_stack_size,(stack_set_size - free_stack_size));
 
 	free(p_malloc);
 	//free(next_malloc);
@@ -192,7 +194,7 @@ char shell_run_script(char* parameter)
 char shell_start_tcm300_rx(char* parameter)
 {
 	//P_S_Cmd_Info cmd_info = (P_S_Cmd_Info)parameter;	
-	my_usart_init();
+	my_usart2_init();
 	return 0;
 }
 
@@ -246,9 +248,6 @@ char shell_start_server(char* parameter)
 
 char shell_kill_server(char* parameter)
 {
-	//P_S_Cmd_Info cmd_info = (P_S_Cmd_Info)parameter;
-	//static unsigned char states = 0;
-	//states = getSn_SR(0);
 	close_socket_server(0);
 	close_socket_server(1);
 	close_socket_server(2);
@@ -561,113 +560,7 @@ char shell_set_tel_parameter(char* parameter)
 								}
 							continue;
 						}
-					if(1 == str_cmp("parameter2", cmd_info->parameter[loopx]))
-						{
-							parameter_tmp.parameter_code = (shell_parameter_translate(cmd_info).parameter_code);
-							if(parameter_tmp.parameter.length)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[1].parameter.length = parameter_tmp.parameter.length;
-								}
-							if(parameter_tmp.parameter.offset)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[1].parameter.offset= parameter_tmp.parameter.offset;
-								}
-							if(parameter_tmp.parameter.parameter_name)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[1].parameter.parameter_name = parameter_tmp.parameter.parameter_name;
-								}
-							
-							if(current_operat_telegraph.telegraphs[current_point].parameter[1].parameter_code)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter_num =current_operat_telegraph.telegraphs[current_point].parameter_num>2? current_operat_telegraph.telegraphs[current_point].parameter_num : 2;
-								}
-							continue;
-						}
-					if(1 == str_cmp("parameter3", cmd_info->parameter[loopx]))
-						{
-							parameter_tmp.parameter_code = (shell_parameter_translate(cmd_info).parameter_code);
-							if(parameter_tmp.parameter.length)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[2].parameter.length = parameter_tmp.parameter.length;
-								}
-							if(parameter_tmp.parameter.offset)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[2].parameter.offset= parameter_tmp.parameter.offset;
-								}
-							if(parameter_tmp.parameter.parameter_name)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[2].parameter.parameter_name = parameter_tmp.parameter.parameter_name;
-								}
-							
-							if(current_operat_telegraph.telegraphs[current_point].parameter[2].parameter_code)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter_num = current_operat_telegraph.telegraphs[current_point].parameter_num>3? current_operat_telegraph.telegraphs[current_point].parameter_num : 3;
-								}
-							continue;
-						}
-					if(1 == str_cmp("parameter4", cmd_info->parameter[loopx]))
-						{
-							parameter_tmp.parameter_code = (shell_parameter_translate(cmd_info).parameter_code);
-							if(parameter_tmp.parameter.length)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[3].parameter.length = parameter_tmp.parameter.length;
-								}
-							if(parameter_tmp.parameter.offset)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[3].parameter.offset= parameter_tmp.parameter.offset;
-								}
-							if(parameter_tmp.parameter.parameter_name)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[3].parameter.parameter_name = parameter_tmp.parameter.parameter_name;
-								}
-							if(current_operat_telegraph.telegraphs[current_point].parameter[3].parameter_code)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter_num = current_operat_telegraph.telegraphs[current_point].parameter_num>4? current_operat_telegraph.telegraphs[current_point].parameter_num : 4;
-								}
-							continue;
-						}
-					if(1 == str_cmp("parameter5", cmd_info->parameter[loopx]))
-						{
-							parameter_tmp.parameter_code = (shell_parameter_translate(cmd_info).parameter_code);
-							if(parameter_tmp.parameter.length)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[4].parameter.length = parameter_tmp.parameter.length;
-								}
-							if(parameter_tmp.parameter.offset)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[4].parameter.offset= parameter_tmp.parameter.offset;
-								}
-							if(parameter_tmp.parameter.parameter_name)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[4].parameter.parameter_name = parameter_tmp.parameter.parameter_name;
-								}
-							if(current_operat_telegraph.telegraphs[current_point].parameter[4].parameter_code)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter_num = current_operat_telegraph.telegraphs[current_point].parameter_num>5? current_operat_telegraph.telegraphs[current_point].parameter_num : 5;
-								}
-							continue;
-						}
-					if(1 == str_cmp("parameter6", cmd_info->parameter[loopx]))
-						{
-							parameter_tmp.parameter_code = (shell_parameter_translate(cmd_info).parameter_code);
-							if(parameter_tmp.parameter.length)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[5].parameter.length = parameter_tmp.parameter.length;
-								}
-							if(parameter_tmp.parameter.offset)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[5].parameter.offset= parameter_tmp.parameter.offset;
-								}
-							if(parameter_tmp.parameter.parameter_name)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter[5].parameter.parameter_name = parameter_tmp.parameter.parameter_name;
-								}
-							if(current_operat_telegraph.telegraphs[current_point].parameter[5].parameter_code)
-								{
-									current_operat_telegraph.telegraphs[current_point].parameter_num = current_operat_telegraph.telegraphs[current_point].parameter_num>6? current_operat_telegraph.telegraphs[current_point].parameter_num : 6;
-								}
-							continue;
-						}*/
+					*/
 				}
 		}
 	else
@@ -1121,7 +1014,7 @@ unsigned char str_to_hex(char* str,unsigned char* target,unsigned int max_length
 	//unsigned char reslut;
 	
 	tmp = string_length(str);
-	if(tmp > 2*max_length)  //需要转换的长度大于设置的目标最大保存超度时   截去多余的转换长度防止硬错误
+	if(tmp > 2*max_length)  //需要转换的长度大于设置的目标最大保存超度时   截去多余的转换长度防止段错误
 		{
 			tmp =  2*max_length;
 		}
@@ -1328,7 +1221,7 @@ void explain_cmd(unsigned char recv_data)
 				}
 			if(split_string(&recv_cmd) == 2)
 				{
-					printf("Beside I Can't recv More Than %d Parts !\n\r       OUT OF MEMORY!  Please Check out!!\n\r  ",CMD_PARAMETER_NUM);
+					printf("I Can't recv More Than %d Parts !\n\r       OUT OF MEMORY!  Please Check out!!\n\r  ",CMD_PARAMETER_NUM);
 				}
 			recv_cmd.point = 0;
 			set_string(recv_cmd.recv_buf,CMD_REVC_BUF_SIZE,0);

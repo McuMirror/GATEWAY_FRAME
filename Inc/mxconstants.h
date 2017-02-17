@@ -4,7 +4,7 @@
   * Description        : This file contains the common defines of the application
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2016 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -91,6 +91,14 @@
 #define TCM300_TX_GPIO_Port GPIOD
 #define TCM300_RX_Pin GPIO_PIN_6
 #define TCM300_RX_GPIO_Port GPIOD
+#define WIFI_NREADY_Pin GPIO_PIN_7
+#define WIFI_NREADY_GPIO_Port GPIOD
+#define WIFI_NLINK_Pin GPIO_PIN_3
+#define WIFI_NLINK_GPIO_Port GPIOB
+#define WIFI_SMART_LINK_Pin GPIO_PIN_4
+#define WIFI_SMART_LINK_GPIO_Port GPIOB
+#define WIFI_REST_Pin GPIO_PIN_5
+#define WIFI_REST_GPIO_Port GPIOB
 #define WIFI_TX_Pin GPIO_PIN_6
 #define WIFI_TX_GPIO_Port GPIOB
 #define WIFI_RX_Pin GPIO_PIN_7

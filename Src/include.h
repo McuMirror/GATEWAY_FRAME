@@ -51,6 +51,7 @@ typedef char int8;
 
 
 #include "tcm300.h"
+#include "wifi.h"
 #include "gateway.h"
 #include "translate_to_tcm300.h"
 #include "CRC.h"

@@ -5,7 +5,7 @@
   *                      of the USART instances.
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2016 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -595,12 +595,17 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 
 /* USER CODE BEGIN 1 */
 
-void my_usart_init(void)
+void my_usart1_init(void)
+{
+	HAL_UART_Receive_DMA(&huart1, data_from_wifi.rx_data, WIFI_RECV_BUFF_SIZE);  
+	__HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);	
+}
+
+void my_usart2_init(void)
 {
 	HAL_UART_Receive_DMA(&huart2, data_from_tcm300.rx_data, TCM300_RECV_BUFF_SIZE);  
 	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);	
 }
-
 
 
 /* USER CODE END 1 */

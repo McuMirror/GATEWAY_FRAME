@@ -6,11 +6,11 @@
 #define PC5_1 HAL_GPIO_WritePin(GPIOC,GPIO_PIN_5,GPIO_PIN_SET)
 
 
-//unsigned char G_tcp_buf[8][SOCKET_BUFF_SIZE];
+//unsigned char G_socket_buf[8][SOCKET_BUFF_SIZE];
 
 wiz_NetInfo gWIZNETINFO;
 netmode_type g_net_mode;
-unsigned char G_tcp_buf[8][SOCKET_BUFF_SIZE];
+unsigned char G_socket_buf[8][SOCKET_BUFF_SIZE];
 S_Tcp_Server Socket_Server;
 
 extern S_SYS_Task_Info SYS_Task_Info;
@@ -280,10 +280,10 @@ unsigned char start_tcp_server(unsigned int socket_num,unsigned int port)
 							{
 								setSn_IR(num,Sn_IR_CON);
 							}
-						Socket_Server.socket_recv_num[num]= recv(num,G_tcp_buf[num],SOCKET_BUFF_SIZE) ;
+						Socket_Server.socket_recv_num[num]= recv(num,G_socket_buf[num],SOCKET_BUFF_SIZE) ;
 						if(Socket_Server.socket_recv_num[num] > 0)
 							{
-								send(num,G_tcp_buf[num],Socket_Server.socket_recv_num[num]) ;//收到数据
+								send(num,G_socket_buf[num],Socket_Server.socket_recv_num[num]) ;//收到数据
 								deal_all_socket_server();
 								deal_each_socket_server(num);
 								Socket_Server.socket_recv_num[num] = 0;
@@ -510,10 +510,10 @@ unsigned char start_tcp_client(p_S_Client_Info client)
 							{
 								setSn_IR(num,Sn_IR_CON);
 							}
-						Socket_Server.socket_recv_num[num] = recv(num,G_tcp_buf[num],SOCKET_BUFF_SIZE) ;
+						Socket_Server.socket_recv_num[num] = recv(num,G_socket_buf[num],SOCKET_BUFF_SIZE) ;
 						if(Socket_Server.socket_recv_num[num] > 0)
 							{
-								send(num,G_tcp_buf[num],Socket_Server.socket_recv_num[num]) ;//收到数据
+								send(num,G_socket_buf[num],Socket_Server.socket_recv_num[num]) ;//收到数据
 								deal_all_socket_client();
 								deal_each_socket_client(num);
 								Socket_Server.socket_recv_num[num] = 0;
@@ -679,7 +679,7 @@ unsigned char start_udp_server(unsigned int socket_num,unsigned int port)
 					if((size = getSn_RX_RSR(socket_num)) > 0)
 					{
 						if(size > SOCKET_BUFF_SIZE) size = SOCKET_BUFF_SIZE;
-						ret = recvfrom(socket_num,G_tcp_buf[num],size,destip,(unsigned short*)&destport);
+						ret = recvfrom(socket_num,G_socket_buf[num],size,destip,(unsigned short*)&destport);
 						if(ret <= 0)
 						{
 							printf("%d: recvfrom error. %ld\r\n",socket_num,ret);
@@ -692,7 +692,7 @@ unsigned char start_udp_server(unsigned int socket_num,unsigned int port)
 						
 						while(sentsize != size)
 							{
-								ret = sendto(socket_num,G_tcp_buf[num]+sentsize,size-sentsize,destip,destport);
+								ret = sendto(socket_num,G_socket_buf[num]+sentsize,size-sentsize,destip,destport);
 								if(ret < 0)
 									{
 										printf("%d: sendto error. %ld\r\n",socket_num,ret);
@@ -703,7 +703,7 @@ unsigned char start_udp_server(unsigned int socket_num,unsigned int port)
 					break;
 				case SOCK_CLOSED:
 					//printf("\r\n%d:LBUStart\r\n",socket_num);
-					if((ret=socket(socket_num,Sn_MR_UDP,port,0x00)) != socket_num)//单播广播
+					if((ret=socket(socket_num,Sn_MR_UDP,port,0x00)) != socket_num)//单播广播同一网段内发送广播地址就可以收到likes:192.168.1.255:8800
 						{
 							printf("%d:Opened error\r\n",socket_num);
 						}

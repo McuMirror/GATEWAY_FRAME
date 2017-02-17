@@ -49,7 +49,7 @@ typedef struct
 
 extern wiz_NetInfo gWIZNETINFO;
 extern netmode_type g_net_mode;
-extern unsigned char G_tcp_buf[8][SOCKET_BUFF_SIZE];
+extern unsigned char G_socket_buf[8][SOCKET_BUFF_SIZE];
 
 
  void SPI_CrisEnter(void);

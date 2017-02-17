@@ -13,7 +13,10 @@
 #define TCM300_SEND_BUFF_SIZE 256
 
 
-#define P_CURRENT_TCM300_RX_DATA 	(tcm300_operat_data.tcm300_buf[tcm300_operat_data.operat_point])
+#define P_CURRENT_TCM300_RX_DATA 		(tcm300_operat_data.recv_msg[tcm300_operat_data.operat_point].rx_data)
+#define CURRENT_TCM300_RX_DATA_LENGTH	(tcm300_operat_data.recv_msg[tcm300_operat_data.operat_point].len)
+#define TCM300_RX_DATA(x)				(tcm300_operat_data.recv_msg[tcm300_operat_data.operat_point].rx_data[(x)])
+#define FINISH_DEAL_TCM300_RX_DATA 		(tcm300_operat_data.recv_msg[tcm300_operat_data.operat_point++].this_data_effect = UNEFFECT)
 
 typedef struct
 {
@@ -82,5 +85,7 @@ void deal_pir_sub(void);
 void send_data_to_tcm300_by_msg(unsigned char* data,unsigned short data_length);*/
 void task_tcm300_send(unsigned int addr);
 void transfer_tcm300_rxdata(void);
+
+void save_tcm300_log(char* log,unsigned char log_length);
 
 #endif

@@ -4,7 +4,7 @@
   * Description        : Main program body
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2016 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -131,14 +131,18 @@ int main(void)
   MX_TIM9_Init();
 
   /* USER CODE BEGIN 2 */
-printf("\n\r\n\r        mcu init success!\n\r");
-printf("        starting freertos kernel...\n\r");
+	RELEASE_WIFI_RESET;
+	RELEASE_SMART_LINK;
+	printf("\n\r\n\r        mcu init success!\n\r");
+	printf("        starting freertos kernel...\n\r");
+	//SET_SMART_LINK;
 
 
 
 while(HAL_UART_Receive_IT(&huart6,&G_Usart6_Buff,1)==HAL_OK);
 
-
+	my_usart1_init();
+	//my_usart2_init();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
@@ -248,7 +252,25 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			HAL_TIM_Base_Start_IT(&htim2);
 			data_from_tcm300.dma_cndtr =  huart2.hdmarx->Instance->NDTR;
 		}
-  }
+  	}
+
+	if (htim->Instance == TIM3) {
+  	HAL_TIM_Base_Stop_IT(&htim3);
+	if(data_from_wifi.dma_cndtr ==  huart1.hdmarx->Instance->NDTR)
+		{			
+		        HAL_UART_DMAStop(&huart1);   
+			data_from_wifi.data_len = WIFI_RECV_BUFF_SIZE -data_from_wifi.dma_cndtr;
+			Wifi_Mesg = USART1_RECV_DATA;
+			xQueueSendFromISR(serial_queueHandle,&Wifi_Mesg,&xHigherPriorityTaskWoken);			
+			transfer_wifi_rxdata();
+			HAL_UART_Receive_DMA(&huart1, data_from_wifi.rx_data, WIFI_RECV_BUFF_SIZE);  			
+		}
+	else
+		{
+			HAL_TIM_Base_Start_IT(&htim3);
+			data_from_wifi.dma_cndtr =  huart1.hdmarx->Instance->NDTR;
+		}
+ 	}
 /* USER CODE END Callback 0 */
   if (htim->Instance == TIM1) {
     HAL_IncTick();

@@ -14,6 +14,7 @@
                             printf(__VA_ARGS__);\
                             printf("\r\n");
 #else
+#define  DEBUG_USR_ErrLog(...) 
 #endif
 
 #if (DEBUG > 1)
@@ -22,6 +23,7 @@
                             printf(__VA_ARGS__);\
                             printf("\r\n");
 #else
+#define  DEBUG_SYS_ErrLog(...) 
 #endif
 
 
